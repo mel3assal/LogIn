@@ -1,0 +1,114 @@
+var signupName = document.getElementById('signupName')
+var signupEmail = document.getElementById('signupEmail')
+var signupPassword = document.getElementById('signupPassword')
+var signInEmail = document.getElementById('signInEmail')
+var signInPassword = document.getElementById('signInPassword')
+
+
+function login() {
+    if (isLoginEmpty() == false) {
+        document.getElementById('wrong-password').innerHTML = '<span class="text-danger m-3">All inputs is required</span>'
+        return false
+    }
+    var password = signInPassword.value
+    var email = signInEmail.value
+    for (var i = 0; i < signUpArray.length; i++) {
+        if (signUpArray[i].email.toLowerCase() == email.toLowerCase() && signUpArray[i].password.toLowerCase() == password.toLowerCase()) {
+            localStorage.setItem('loggedUser', signUpArray[i].name)
+            if (baseURL == '/') {
+                location.replace('https://' + location.hostname + '/home.html')
+
+            } else {
+                location.replace(baseURL + '/home.html')
+
+            }
+        } else {
+            document.getElementById('wrong-password').innerHTML = '<span class="p-2 text-danger">incorrect email or password</span>'
+        }
+    }
+
+}
+
+
+
+
+var pathparts = location.pathname.split('/');
+var baseURL = ''
+for (var i = 0; i < pathparts.length - 1; i++) {
+    baseURL += '/' + pathparts[i]
+}
+
+var username = localStorage.getItem('loggedUser')
+if (username) {
+    document.getElementById('username').innerHTML = "Welcome " + username
+}
+
+
+var signUpArray;
+if (localStorage.getItem('customers') == null) {
+    signUpArray = []
+} else {
+    signUpArray = JSON.parse(localStorage.getItem('customers'))
+}
+
+function isEmpty() {
+    if (signupName.value == "" || signupEmail.value == "" || signupPassword.value == "") {
+        return false
+    } else {
+        return true
+    }
+}
+
+function isEmailExist() {
+    for (var i = 0; i < signUpArray.length; i++) {
+        if (signUpArray[i].email.toLowerCase() == signupEmail.value.toLowerCase()) {
+            return false
+        }
+    }
+}
+
+
+function signUp() {
+    if (isEmpty() == false) {
+        document.getElementById('founded').innerHTML = '<span class="text-danger m-3">All inputs is required</span>'
+        return false
+    }
+
+    var signUp = {
+        name: signupName.value,
+        email: signupEmail.value,
+        password: signupPassword.value,
+    }
+    if (signUpArray.length == 0) {
+        signUpArray.push(signUp)
+        localStorage.setItem('customers', JSON.stringify(signUpArray))
+        document.getElementById('founded').innerHTML = '<span class="text-success m-3">Success</span>'
+        return true
+    }
+    if (isEmailExist() == false) {
+        document.getElementById('founded').innerHTML = '<span class="text-danger m-3">email already exists</span>'
+
+    } else {
+        signUpArray.push(signUp)
+        localStorage.setItem('customers', JSON.stringify(signUpArray))
+        document.getElementById('founded').innerHTML = '<span class="text-success m-3">Success</span>'
+
+    }
+
+
+}
+
+
+function isLoginEmpty() {
+    if (signInPassword.vale == "" || signInEmail.value == "") {
+        return false
+    } else {
+        return true
+    }
+}
+
+
+
+function logout() {
+    localStorage.removeItem('loggedUser')
+}
